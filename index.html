@@ -96,7 +96,12 @@
             color: white;
         }
 
+        #kembali:hover {
+            background-color: #00dd6b;
+        }
+
         .container {
+            max-width: 1050px;
             min-width: 400px;
             border: 2px solid #90caff;
             margin: 50px auto;
@@ -123,7 +128,7 @@
         }
 
         h1 {
-            color: #ffffff;
+            color: #c30404;
             align-self: center;
             text-align: center;
         }
@@ -157,6 +162,7 @@
             z-index: 999;
             font-size: 12px;
         }
+
         .section-box-4 {
             display: flex;
             background: #e3f2fd;
@@ -238,12 +244,12 @@
             /* supaya semua box rata lebarnya */
             min-width: 150px;
             max-width: 500px;
-            
+
             /* batasi lebar */
             display: flex;
             flex-direction: column;
             align-items: center;
-            
+
         }
 
         .card {
@@ -285,17 +291,26 @@
             opacity: 50%;
         }
 
+        @media (max-width: 890px) {
+            .Informasinya {
+                flex-direction: column;
+
+            }
+        }
+
         .Informasinya {
             display: flex;
             padding-left: 10%;
             padding-right: 10%;
-            flex-direction: row;
+            flex-direction: column;
+            align-items: center;
             justify-content: space-evenly;
             align-content: center;
             gap: 10px;
         }
 
         .Detailinfo {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
             width: 100%;
             display: flex;
             flex: auto;
@@ -377,6 +392,7 @@
             background: #ccc;
             color: black;
         }
+
         .timer {
             border: 2px solid #90caff;
             font-size: 13px;
@@ -386,6 +402,17 @@
             padding: 5px 10px;
             margin: 2px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        img[usemap] {
+            outline: none;
+            /* hilangkan outline biru */
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        area {
+            outline: none;
         }
     </style>
 </head>
@@ -406,14 +433,14 @@
 
     <div id="pointModal" class="modal">
         <div class="modal-content">
-            <h3>🎉 Selamat!</h3>
-            <p id="pointText">Kamu mendapatkan 10 poin!</p>
+            <h3> Good Job !</h3>
+            <p id="pointText">Kamu mendapatkan poin!</p>
             <button id="closePoint">OK</button>
         </div>
     </div>
 
-
-    <div style="margin-bottom: 20px;">
+    <div container>
+        <div style="margin-bottom: 20px;">
             <h3 style="color: #ffa500;">Progress Bar</h3>
             <div id="progressContainer"
                 style="width: 100%; height: 20px; background-color: #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -427,16 +454,21 @@
             <div class="timer"> ✅ Poin : <br> <span id="edupoint">0</span></div>
         </div>
 
+    </div>
 
 
 
-    <div id="containerAwal">
+
+
+
+
+    <div class="container" id="containerAwal">
         <center>
             <h1> PETA KEBERAGAMAAN INDONESIA </h1>
         </center>
         <canvas id='myCanvas'></canvas>
         <div id="infoBox"></div>
-        <img id="image" img src="images/PetaProvinsi.webp" usemap="#image-map">
+        <img id="image" img src="./images/PetaProvinsi.webp" usemap="#image-map">
         <map name="image-map">
             <area target="_self" alt="Aceh" title="Aceh" onmouseover='myHover(this, event);' onmouseout='myLeave();'
                 coords="106,396,110,452,158,507,218,563,277,595,325,655,325,706,377,718,349,583,349,539,389,511,341,467,321,432"
@@ -448,7 +480,7 @@
             <area target="_self" alt="Sumatera Barat" title="Sumatera Barat" onmouseover='myHover(this, event);'
                 onmouseout='myLeave();'
                 coords="480,900,548,888,548,849,584,861,580,892,628,924,628,964,696,1004,723,1036,700,1060,652,1072,668,1119,644,1155"
-                shape="poly" onclick="pilihProvinsi('sumbar')">
+                shape="poly" onclick="pilihProvinsi('Sumbar')">
             <area target="_self" alt="Riau" title="Riau" onmouseover='myHover(this, event);' onmouseout='myLeave();'
                 coords="592,717,596,765,576,797,580,833,600,880,628,900,644,932,660,956,715,1004,755,1008,811,1020,843,976,875,980,863,936,903,920,755,745,656,697"
                 shape="poly" onclick="pilihProvinsi('')">
@@ -477,6 +509,7 @@
 
 
 
+
     <script>
         let timerInterval;
         let totalSeconds = 0;
@@ -486,14 +519,23 @@
         let visitedProvinces = new Set()
         let visitedProv = new Set();
         const TOTAL_PROVINCE = 38;
-       
+        const BASE_POINT = Math.floor(100 / TOTAL_PROVINCE);  // 2
+        const EXTRA_POINT_COUNT = 100 % TOTAL_PROVINCE;       // 24
+
+        // fungsi untuk hitung poin provinsi tertentu
+        function getProvincePoint(index) {
+            return index >= (TOTAL_PROVINCE - EXTRA_POINT_COUNT)
+                ? BASE_POINT + 1   // 3 poin
+                : BASE_POINT;      // 2 poin
+        }
+
 
         timerInterval = setInterval(() => {
-                totalSeconds++;
-                const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-                const seconds = String(totalSeconds % 60).padStart(2, '0');
-                document.getElementById("timer").textContent = `${minutes}:${seconds}`;
-            }, 1000);
+            totalSeconds++;
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}`;
+        }, 1000);
 
 
 
@@ -659,10 +701,10 @@
 
         function showPointModal(message) {
             const modal = document.getElementById("pointModal");
-            const text = document.getElementById("pointText");
+            var text = document.getElementById("pointText");
             const closeBtn = document.getElementById("closePoint");
 
-            text.textContent = message;
+            text.innerHTML = message;
             modal.style.display = "flex";
 
             closeBtn.onclick = () => {
@@ -673,35 +715,34 @@
 
 
         function backToMap() {
-            // kalau semua card dalam 1 provinsi sudah dibuka → beri poin
             const data = Dataprovinsi[currentProv];
             if (data && visitedCards.size === data.konten.length) {
-                visitedProvinces.add(currentProv);
-                edupoint = Math.floor((visitedProvinces.size / TOTAL_PROVINCE) * 100);
-                updateEdupoint()
-                showPointModal(`Kamu dapat poin! 🎉 Total Poin: ${edupoint}`);
+                const provIndex = Object.keys(Dataprovinsi).indexOf(currentProv);
 
+                if (!visitedProvinces.has(currentProv) && provIndex >= 0) {
+                    visitedProvinces.add(currentProv);
 
-                // kalau sudah semua provinsi → badge
-                if (visitedProvinces.size === TOTAL_PROVINCE) {
-                    alert("Selamat! Kamu sudah mengunjungi semua provinsi dan mendapatkan Badge Nusantara! 🏅");
+                    const gainedPoint = getProvincePoint(provIndex);
+                    edupoint += gainedPoint;
+
+                    updateEdupoint();
+                    showPointModal(`Hebat! 🎉 Kamu dapat <br> +${gainedPoint} poin!`);
                 }
             }
 
-            // reset state provinsi
             visitedCards.clear();
             currentProv = null;
-
             document.getElementById("containerAwal").style.display = 'block';
             document.getElementById("containerUtama").style.display = 'none';
         }
+
 
     </script>
 
 
 
 
-    <script>
+    <script defer>
         /*! Image Map Resizer (imageMapResizer.min.js ) - v1.0.10 - 2019-04-10
         *  Desc: Resize HTML imageMap to scaled image.
         *  Copyright: (c) 2019 David J. Bradshaw - dave@bradshaw.net
@@ -712,8 +753,39 @@
         //# sourceMappingURL=imageMapResizer.map
     </script>
 
-    <script>
+    <script defer>
+        function myInit() {
+            const img = document.getElementById("image");
+            const canvas = document.getElementById("myCanvas");
+
+            // set ukuran canvas sesuai ukuran gambar saat pertama kali load
+            canvas.width = img.clientWidth;
+            canvas.height = img.clientHeight;
+        }
+
+        // panggil myInit saat halaman selesai dimuat
+        window.addEventListener("load", myInit);
+
+        // update canvas & infoBox setiap kali window di-resize
+        window.addEventListener("resize", () => {
+            const img = document.getElementById("image");
+            const canvas = document.getElementById("myCanvas");
+
+            // sesuaikan ukuran canvas
+            canvas.width = img.clientWidth;
+            canvas.height = img.clientHeight;
+
+            // kalau infoBox sedang ditampilkan, update posisinya
+            const infoBox = document.getElementById("infoBox");
+            if (infoBox.style.display === "block") {
+                // contoh: taruh di pojok kiri atas gambar + offset 20px
+                const rect = img.getBoundingClientRect();
+                infoBox.style.left = (rect.left + 20) + "px";
+                infoBox.style.top = (rect.top + 20) + "px";
+            }
+        });
         imageMapResize();
+
     </script>
 
 
@@ -742,7 +814,7 @@
         }); 
     </script>
 
-    <script>
+    <script defer>
         //scrip hover area peta
         const canvas = document.getElementById("myCanvas");
         const ctx = canvas.getContext("2d");
